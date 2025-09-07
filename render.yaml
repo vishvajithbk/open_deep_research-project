@@ -30,3 +30,17 @@ services:
       sync: false
     - key: OPENROUTER_API_KEY
       sync: false
+    - key: TAVILY_API_KEY
+      sync: false
+    # LangSmith (aka LangChain tracing)
+    - key: LANGCHAIN_API_KEY         # <-- your LangSmith key goes here
+      sync: false
+    - key: LANGCHAIN_TRACING_V2
+      value: "true"
+    - key: LANGCHAIN_ENDPOINT
+      value: "https://api.smith.langchain.com"
+    - key: LANGCHAIN_PROJECT         # optional, nice for grouping runs
+      value: "odr-prod"
+    # (Optional legacy alias; harmless to include)
+    - key: LANGSMITH_API_KEY
+      sync: false
