@@ -1,0 +1,32 @@
+services:
+- type: web
+  name: odr-langgraph
+  env: python
+  plan: free
+  autoDeploy: true
+
+  buildCommand: |
+    # Install uv (fast package manager) and Python toolchain
+    pip install pipx
+    pipx ensurepath
+    pipx install uv
+    # Make sure we have Python 3.11 available
+    uv python install 3.11
+    # Install your project deps from pyproject/uv.lock
+    uv sync --frozen
+    # Install the LangGraph CLI as a uv tool (so we can run 'langgraph')
+    uv tool install "langgraph-cli[inmem]"
+
+  startCommand: |
+    # Boot the dev server bound to Render's port & 0.0.0.0
+    uv run --python 3.11 \
+      langgraph dev \
+        --host 0.0.0.0 \
+        --port $PORT \
+        --allow-blocking
+
+  envVars:
+    - key: OPENAI_API_KEY
+      sync: false
+    - key: OPENROUTER_API_KEY
+      sync: false
