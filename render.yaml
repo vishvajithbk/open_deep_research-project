@@ -28,8 +28,6 @@ services:
   envVars:
     - key: OPENAI_API_KEY
       sync: false
-    - key: OPENROUTER_API_KEY
-      sync: false
     - key: TAVILY_API_KEY
       sync: false
     # LangSmith (aka LangChain tracing)
@@ -39,8 +37,5 @@ services:
       value: "true"
     - key: LANGCHAIN_ENDPOINT
       value: "https://api.smith.langchain.com"
-    - key: LANGCHAIN_PROJECT         # optional, nice for grouping runs
-      value: "odr-prod"
-    # (Optional legacy alias; harmless to include)
-    - key: LANGSMITH_API_KEY
-      sync: false
+    
+  
