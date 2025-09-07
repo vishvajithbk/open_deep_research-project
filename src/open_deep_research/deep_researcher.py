@@ -52,6 +52,11 @@ from open_deep_research.utils import (
     think_tool,
 )
 
+from open_deep_research.arxiv_tool import arxiv_search
+# Optional global toggle (env or default)
+# import os
+# DISABLE_STREAMING = os.getenv("ODR_DISABLE_STREAMING", "1") == "1"
+
 # Initialize a configurable model that we will use throughout the agent
 configurable_model = init_chat_model(
     configurable_fields=("model", "max_tokens", "api_key"),
@@ -82,6 +87,7 @@ async def clarify_with_user(state: AgentState, config: RunnableConfig) -> Comman
         "model": configurable.research_model,
         "max_tokens": configurable.research_model_max_tokens,
         "api_key": get_api_key_for_model(configurable.research_model, config),
+        # "streaming": False,
         "tags": ["langsmith:nostream"]
     }
     
@@ -135,6 +141,7 @@ async def write_research_brief(state: AgentState, config: RunnableConfig) -> Com
         "model": configurable.research_model,
         "max_tokens": configurable.research_model_max_tokens,
         "api_key": get_api_key_for_model(configurable.research_model, config),
+        # "streaming": False,
         "tags": ["langsmith:nostream"]
     }
     
@@ -382,6 +389,8 @@ async def researcher(state: ResearcherState, config: RunnableConfig) -> Command[
     
     # Get all available research tools (search, MCP, think_tool)
     tools = await get_all_tools(config)
+    # Register arXiv tool (idempotent add)
+    tools = [*tools, arxiv_search]
     if len(tools) == 0:
         raise ValueError(
             "No tools found to conduct research: Please configure either your "
@@ -465,6 +474,8 @@ async def researcher_tools(state: ResearcherState, config: RunnableConfig) -> Co
     
     # Step 2: Handle other tool calls (search, MCP tools, etc.)
     tools = await get_all_tools(config)
+    # Ensure arXiv tool is available during execution
+    tools = [*tools, arxiv_search]
     tools_by_name = {
         tool.name if hasattr(tool, "name") else tool.get("name", "web_search"): tool 
         for tool in tools
@@ -528,6 +539,7 @@ async def compress_research(state: ResearcherState, config: RunnableConfig):
         "model": configurable.compression_model,
         "max_tokens": configurable.compression_model_max_tokens,
         "api_key": get_api_key_for_model(configurable.compression_model, config),
+        # "streaming": False,
         "tags": ["langsmith:nostream"]
     })
     
@@ -628,6 +640,7 @@ async def final_report_generation(state: AgentState, config: RunnableConfig):
         "model": configurable.final_report_model,
         "max_tokens": configurable.final_report_model_max_tokens,
         "api_key": get_api_key_for_model(configurable.final_report_model, config),
+        # "streaming": False,
         "tags": ["langsmith:nostream"]
     }
     
