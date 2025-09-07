@@ -6,36 +6,26 @@ services:
   autoDeploy: true
 
   buildCommand: |
-    # Install uv (fast package manager) and Python toolchain
-    pip install pipx
-    pipx ensurepath
-    pipx install uv
-    # Make sure we have Python 3.11 available
-    uv python install 3.11
-    # Install your project deps from pyproject/uv.lock
+    pip install uv
     uv sync --frozen
-    # Install the LangGraph CLI as a uv tool (so we can run 'langgraph')
-    uv tool install "langgraph-cli[inmem]"
 
   startCommand: |
-    # Boot the dev server bound to Render's port & 0.0.0.0
-    uv run --python 3.11 \
-      langgraph dev \
-        --host 0.0.0.0 \
-        --port $PORT \
-        --allow-blocking
+    uvx --refresh --from "langgraph-cli[inmem]" --python 3.11 \
+      langgraph dev --host 0.0.0.0 --port $PORT --allow-blocking
 
   envVars:
+    - key: OPENROUTER_API_KEY
+      sync: false
     - key: OPENAI_API_KEY
       sync: false
     - key: TAVILY_API_KEY
       sync: false
-    # LangSmith (aka LangChain tracing)
-    - key: LANGCHAIN_API_KEY         # <-- your LangSmith key goes here
+    - key: LANGCHAIN_API_KEY
       sync: false
     - key: LANGCHAIN_TRACING_V2
       value: "true"
     - key: LANGCHAIN_ENDPOINT
       value: "https://api.smith.langchain.com"
-    
-  
+    - key: LANGCHAIN_PROJECT
+      value: "odr-prod"
+
