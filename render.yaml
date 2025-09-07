@@ -10,8 +10,7 @@ services:
     uv sync --frozen
 
   startCommand: |
-    uvx --refresh --from "langgraph-cli[inmem]" --python 3.11 \
-      langgraph dev --host 0.0.0.0 --port $PORT --allow-blocking
+    uv run uvicorn server:app --host 0.0.0.0 --port $PORT
 
   envVars:
     - key: OPENAI_API_KEY
@@ -26,4 +25,3 @@ services:
       value: "https://api.smith.langchain.com"
     - key: LANGCHAIN_PROJECT
       value: "odr-prod"
-
