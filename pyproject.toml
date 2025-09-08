@@ -44,6 +44,8 @@ dependencies = [
     "langchain-aws>=0.2.28",
     "pandas>=2.3.1",
     "langchain-core>=0.3.74",
+    "fastapi>=0.116.1",
+    "uvicorn>=0.35.0",
 ]
 
 [project.optional-dependencies]
